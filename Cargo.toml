@@ -1,5 +1,5 @@
 [workspace]
-members = ["web_frontend", "privaxy"]
+members = ["filter_list", "web_frontend", "privaxy"]
 
 [profile.release]
 lto = true
