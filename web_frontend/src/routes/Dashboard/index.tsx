@@ -7,10 +7,8 @@ import {
   Stack,
   Text,
   IconDownload,
-  Button,
   Column,
   Columns,
-  TextLink,
   ButtonLink,
   Heading,
   Divider
