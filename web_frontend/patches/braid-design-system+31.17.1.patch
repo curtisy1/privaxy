@@ -1,0 +1,120 @@
+diff --git a/node_modules/braid-design-system/lib/components/BraidProvider/BraidProvider.tsx b/node_modules/braid-design-system/lib/components/BraidProvider/BraidProvider.tsx
+index e3c9749..8088376 100644
+--- a/node_modules/braid-design-system/lib/components/BraidProvider/BraidProvider.tsx
++++ b/node_modules/braid-design-system/lib/components/BraidProvider/BraidProvider.tsx
+@@ -10,7 +10,6 @@ import React, {
+   ComponentType,
+   Ref,
+ } from 'react';
+-import { TreatProvider } from 'sku/react-treat';
+ import { ensureResetImported } from '../../css/reset/resetTracker';
+ import { useHideFocusRings } from '../private/hideFocusRings/useHideFocusRings';
+ import { BraidTestProviderContext } from '../BraidTestProvider/BraidTestProviderContext';
+@@ -92,7 +91,6 @@ export const BraidProvider = ({
+ 
+   return (
+     <BraidThemeContext.Provider value={theme}>
+-      <TreatProvider theme={theme.treatTheme}>
+         {styleBody ? (
+           <style type="text/css">{`
+             html,body{margin:0;padding:0;background:${theme.background.lightMode}}
+@@ -113,7 +111,6 @@ export const BraidProvider = ({
+             )}
+           </LinkComponentContext.Provider>
+         </VanillaThemeContainer>
+-      </TreatProvider>
+     </BraidThemeContext.Provider>
+   );
+ };
+diff --git a/node_modules/braid-design-system/lib/components/useToast/Toast.tsx b/node_modules/braid-design-system/lib/components/useToast/Toast.tsx
+index 2112ed3..efb479c 100644
+--- a/node_modules/braid-design-system/lib/components/useToast/Toast.tsx
++++ b/node_modules/braid-design-system/lib/components/useToast/Toast.tsx
+@@ -1,6 +1,5 @@
+ import React, { cloneElement, useCallback, useEffect } from 'react';
+ import assert from 'assert';
+-import { TreatProvider } from 'sku/react-treat';
+ import { Stack } from '../Stack/Stack';
+ import { Inline } from '../Inline/Inline';
+ import { Columns } from '../Columns/Columns';
+@@ -123,7 +122,6 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
+     );
+ 
+     return (
+-      <TreatProvider theme={treatTheme}>
+         <Box
+           display="flex"
+           justifyContent="center"
+@@ -191,7 +189,6 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
+             </ContentBlock>
+           </Box>
+         </Box>
+-      </TreatProvider>
+     );
+   },
+ );
+diff --git a/node_modules/braid-design-system/lib/components/useToast/ToastContext.tsx b/node_modules/braid-design-system/lib/components/useToast/ToastContext.tsx
+index 8b5dcd0..1af7c71 100644
+--- a/node_modules/braid-design-system/lib/components/useToast/ToastContext.tsx
++++ b/node_modules/braid-design-system/lib/components/useToast/ToastContext.tsx
+@@ -8,7 +8,6 @@ import React, {
+   useEffect,
+   Fragment,
+ } from 'react';
+-import { useTheme } from 'sku/react-treat';
+ import { useBraidTheme } from '../BraidProvider/BraidThemeContext';
+ import { BraidPortal } from '../BraidPortal/BraidPortal';
+ import { Toaster } from './Toaster';
+@@ -161,7 +160,6 @@ const ToastPortal = ({ children }: ToastPortalProps) => {
+ };
+ 
+ export const useToast = () => {
+-  const treatTheme = useTheme();
+   const { vanillaTheme } = useBraidTheme();
+   const addToast = useContext(ToastControllerContext);
+ 
+@@ -176,13 +174,12 @@ export const useToast = () => {
+ 
+       addToast({
+         ...toast,
+-        treatTheme,
+         vanillaTheme,
+         id,
+         dedupeKey,
+         shouldRemove: false,
+       });
+     },
+-    [treatTheme, vanillaTheme, addToast],
++    [vanillaTheme, addToast],
+   );
+ };
+diff --git a/node_modules/braid-design-system/lib/components/useToast/ToastTypes.ts b/node_modules/braid-design-system/lib/components/useToast/ToastTypes.ts
+index eb97aa1..8a19cbf 100644
+--- a/node_modules/braid-design-system/lib/components/useToast/ToastTypes.ts
++++ b/node_modules/braid-design-system/lib/components/useToast/ToastTypes.ts
+@@ -9,7 +9,6 @@ export interface ToastAction {
+ export interface InternalToast {
+   id: string;
+   dedupeKey: string;
+-  treatTheme: string;
+   vanillaTheme: string;
+   tone: 'positive' | 'critical' | 'neutral';
+   icon?: ReactElement<UseIconProps>;
+diff --git a/node_modules/braid-design-system/lib/themes/makeBraidTheme.ts b/node_modules/braid-design-system/lib/themes/makeBraidTheme.ts
+index eb99b27..cf5fb90 100644
+--- a/node_modules/braid-design-system/lib/themes/makeBraidTheme.ts
++++ b/node_modules/braid-design-system/lib/themes/makeBraidTheme.ts
+@@ -1,5 +1,4 @@
+ import './treatTheme.d';
+-import { createTheme } from 'sku/treat';
+ import mapValues from 'lodash/mapValues';
+ import values from 'lodash/values';
+ import { FontMetrics, getCapHeight } from '@capsizecss/core';
+@@ -157,7 +156,6 @@ export function makeBraidTheme(braidTokens: BraidTokens) {
+   const decoratedTokens = decorateTokens(braidTokens);
+ 
+   return {
+-    treatTheme: createTheme(decoratedTokens),
+     ...makeRuntimeTokens(decoratedTokens),
+   };
+ }
