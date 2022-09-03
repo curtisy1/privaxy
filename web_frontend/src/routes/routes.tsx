@@ -1,23 +1,23 @@
 import {Route} from "@tanstack/react-location";
 import Dashboard from "./Dashboard";
 import Requests from "./Requests";
+import Settings from "./Settings";
 
 const routes: Route[] = [
   {
     path: '/',
-    id: 'privaxy',
-    children: [
-      {
-        path: '/',
-        element: <Dashboard/>,
-        id: 'dashboard'
-      },
-      {
-        path: '/requests',
-        element: <Requests/>,
-        id: 'requests'
-      },
-    ],
+    element: <Dashboard/>,
+    id: 'dashboard'
+  },
+  {
+    path: '/requests',
+    element: <Requests/>,
+    id: 'requests'
+  },
+  {
+    path: '/settings',
+    element: <Settings/>,
+    id: 'settings',
   },
 ];
 
