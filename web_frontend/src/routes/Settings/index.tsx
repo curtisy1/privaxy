@@ -31,6 +31,7 @@ export default function Settings() {
           </Stack>
         </Column>
         <Column>
+          {/*TODO Add this to the routes*/}
           {activeTab === Tab.Filters && <Filters/>}
           {activeTab === Tab.Exclusions && <Exclusions/>}
           {activeTab === Tab.Custom && <CustomFilter/>}

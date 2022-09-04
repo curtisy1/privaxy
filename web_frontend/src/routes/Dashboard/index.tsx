@@ -14,6 +14,7 @@ import {
   Divider
 } from "braid-design-system";
 import {IconPulsatingCircle} from "../../assets/IconPulsatingCircle";
+import Navbar from "../../Navbar";
 
 type Message = {
   proxied_requests?: number,
