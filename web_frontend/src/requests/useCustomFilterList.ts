@@ -1,21 +1,21 @@
-import {useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import wretcher from "./wretcher";
 
 export default function useCustomFilterList(url: string) {
   const exclusionWretcher = wretcher.url(`/${url}`);
-  // const {isLoading: isLoadingState, data: filter} = useQuery([url], () =>
-  //   exclusionWretcher.get().json<string>()
-  // )
-  //
-  // const {isLoading: isUpdating, refetch} = useQuery([`save${url}`, exclusions], () =>
-  //   exclusionWretcher
-  //     .put({enabled})
-  //     .json()
-  // );
+  const {isLoading: isLoadingState, data: exclusions} = useQuery([url], () =>
+    exclusionWretcher.get().json<string>()
+  )
+
+  const {isLoading: isUpdating, mutate} = useMutation([`save${url}`], (filter: string) =>
+    exclusionWretcher
+      .put({filter})
+      .res()
+  );
 
   return {
-    isLoading: false,
-    filter: "",
-    saveExclusions: () => true,
+    isLoading: isLoadingState || isUpdating,
+    filter: exclusions,
+    saveExclusions: mutate,
   };
 }

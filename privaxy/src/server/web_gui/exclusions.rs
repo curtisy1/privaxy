@@ -3,6 +3,12 @@ use crate::{configuration::Configuration, proxy::exclusions::LocalExclusionStore
 use std::{convert::Infallible, sync::Arc};
 use tokio::sync::mpsc::Sender;
 use warp::http::StatusCode;
+use serde::Deserialize;
+
+#[derive(Debug, Deserialize)]
+pub struct ExclusionRequest {
+    filter: String,
+}
 
 pub async fn get_exclusions(
     http_client: reqwest::Client,
@@ -20,7 +26,7 @@ pub async fn get_exclusions(
 }
 
 pub async fn put_exclusions(
-    exclusions: String,
+    exclusions: ExclusionRequest,
     http_client: reqwest::Client,
     configuration_updater_sender: Sender<Configuration>,
     configuration_save_lock: Arc<tokio::sync::Mutex<()>>,
@@ -36,7 +42,7 @@ pub async fn put_exclusions(
     };
 
     if let Err(err) = configuration
-        .set_exclusions(&exclusions, local_exclusions_store)
+        .set_exclusions(&exclusions.filter, local_exclusions_store)
         .await
     {
         return Ok(Box::new(get_error_response(err)));

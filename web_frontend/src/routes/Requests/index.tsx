@@ -15,7 +15,7 @@ type Request = {
   is_request_blocked: boolean,
 }
 
-const socketUrl = `ws://${window.location.origin}/events`;
+const socketUrl = `ws://localhost:8200/events`;
 
 function TableRow({now, url, is_request_blocked, method}: Request) {
   return (

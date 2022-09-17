@@ -14,17 +14,20 @@ import {
   Divider
 } from "braid-design-system";
 import {IconPulsatingCircle} from "../../assets/IconPulsatingCircle";
-import Navbar from "../../Navbar";
+
+type Dictionary<TKey extends string | number, TValue> = {
+  [key in TKey]: TValue;
+};
 
 type Message = {
   proxied_requests?: number,
   blocked_requests?: number,
   modified_responses?: number,
-  top_blocked_paths: [string, number][],
-  top_clients: [string, number][],
+  top_blocked_paths: Dictionary<string, number>,
+  top_clients: Dictionary<string, number>,
 }
 
-const socketUrl = `ws://${window.location.origin}/statistics`;
+const socketUrl = `ws://localhost:8200/statistics`;
 
 function formatNumber(n?: number) {
   return n?.toLocaleString() ?? "Loading";
@@ -45,23 +48,12 @@ function ListElement([key, count]: [string, number]) {
 }
 
 export default function Dashboard() {
-  const [message, setMessage] = useState<Message>({
-    blocked_requests: 1,
-    modified_responses: 1,
-    proxied_requests: 1,
-    top_blocked_paths: [
-      ["hello", 34],
-      ["bye", 565],
-    ],
-    top_clients: [
-      ["map", 7]
-    ]
-  });
+  const [message, setMessage] = useState<Message>();
   const {lastMessage} = useWebSocket(socketUrl);
 
   useEffect(() => {
     if (lastMessage) {
-      setMessage(lastMessage.data)
+      setMessage(JSON.parse(lastMessage.data))
     }
   }, [lastMessage, setMessage]);
 
@@ -115,7 +107,7 @@ export default function Dashboard() {
                   <Divider/>
                 </Stack>
               </Card>
-              {message.top_blocked_paths.map(ListElement)}
+              {Object.entries(message.top_blocked_paths).map(ListElement)}
             </Card>
           </Column>
           <Column>
@@ -126,7 +118,7 @@ export default function Dashboard() {
                   <Divider/>
                 </Stack>
               </Card>
-              {message.top_clients.map(ListElement)}
+              {Object.entries(message.top_clients).map(ListElement)}
             </Card>
           </Column>
         </Columns>

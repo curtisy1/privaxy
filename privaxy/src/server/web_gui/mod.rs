@@ -1,6 +1,9 @@
 use crate::proxy::exclusions::LocalExclusionStore;
 use crate::statistics::Statistics;
+
+#[cfg(not(debug_assertions))]
 use crate::WEBAPP_FRONTEND_DIR;
+
 use crate::{blocker::BlockingDisabledStore, configuration::Configuration};
 use serde::Serialize;
 use std::net::SocketAddr;
@@ -22,6 +25,7 @@ pub(crate) struct ApiError {
     error: String,
 }
 
+#[cfg(not(debug_assertions))]
 pub(crate) fn start_web_gui_static_files_server(bind: SocketAddr, api_addr: SocketAddr) {
     let filter = warp::get().and(warp::path::tail()).map(move |tail: Tail| {
         let tail_str = tail.as_str();

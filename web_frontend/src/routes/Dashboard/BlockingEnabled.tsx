@@ -18,8 +18,8 @@ export default function BlockingEnabled() {
       loading={enabled === undefined || isLoading}
       type="button"
       tone={enabled ? "critical" : undefined}
-      onClick={async () => {
-        await toggleBlocking();
+      onClick={() => {
+        toggleBlocking(!enabled);
         setEnabled(!enabled);
       }}
     >

@@ -4,7 +4,9 @@ use std::convert::Infallible;
 use warp::http::StatusCode;
 
 #[derive(Deserialize)]
-pub struct BlockingEnabled(bool);
+pub struct BlockingEnabled {
+    enabled: bool,
+}
 
 pub async fn get_blocking_enabled(
     blocking_disabled_store: BlockingDisabledStore,
@@ -18,7 +20,7 @@ pub async fn put_blocking_enabled(
     blocking_enabled: BlockingEnabled,
     blocking_disabled_store: BlockingDisabledStore,
 ) -> Result<impl warp::Reply, Infallible> {
-    *blocking_disabled_store.write().unwrap() = !blocking_enabled.0;
+    *blocking_disabled_store.write().unwrap() = !blocking_enabled.enabled;
 
     Ok(StatusCode::NO_CONTENT)
 }

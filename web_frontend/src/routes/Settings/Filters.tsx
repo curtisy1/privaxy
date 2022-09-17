@@ -5,42 +5,58 @@ import {
   Heading, Divider, Checkbox, Button, IconUpload
 } from "braid-design-system";
 import useFilters, {Filter, FilterGroup} from "../../requests/useFilters";
-import {sanitizeEnum} from "../../helper";
-import {useState} from "react";
-
-function Entry({title, enabled, file_name}: Filter) {
-  const [checked, setChecked] = useState(enabled);
-  return (
-    <Card key={title}>
-      <Checkbox id={file_name} checked={checked} label={file_name} onChange={() => setChecked(!checked)}/>
-      <Divider/>
-    </Card>
-  )
-}
-
-function Category(group: keyof typeof FilterGroup, filters: Filter[]) {
-  return (
-    <Card key={group}>
-      <Stack space="gutter">
-        <Heading level="4">{group}</Heading>
-        <Divider/>
-        <Stack space="small">
-          {filters.map(Entry)}
-        </Stack>
-      </Stack>
-    </Card>
-  )
-}
+import {useEffect, useState} from "react";
 
 export default function Filters() {
   const {isLoading, filters, saveFilters} = useFilters();
+  const [checked, setChecked] = useState(filters);
+
+  useEffect(() => {
+    if (!checked) {
+      setChecked(filters);
+    }
+  }, [isLoading, checked]);
+
+  if (isLoading || !checked) {
+    return <>Loading...</>
+  }
 
   return (
     <Card rounded>
       <Stack space="large">
         <Heading level="2">Filters</Heading>
-        <Button icon={<IconUpload />}>Save Changes</Button>
-        {sanitizeEnum<typeof FilterGroup>(FilterGroup).map((g) => Category(g, filters.filter(f => f.group === FilterGroup[g])))}
+        <Button icon={<IconUpload />} onClick={() => saveFilters(checked)}>Save Changes</Button>
+        {FilterGroup.map((group) => {
+          const filterGroup = checked.filter(f => f.group === group);
+          return (
+            <Card key={group}>
+              <Stack space="gutter">
+                <Heading level="4">{group}</Heading>
+                <Divider/>
+                <Stack space="small">
+                  {filterGroup.map(({title, enabled, file_name, ...rest}) => {
+                    return (
+                      <Card key={title}>
+                        <Checkbox id={file_name} checked={enabled} label={title} onChange={() => {
+                          setChecked([
+                            ...checked.filter(c => c.file_name !== file_name),
+                            {
+                              ...rest,
+                              title,
+                              enabled: !enabled,
+                              file_name,
+                            }
+                          ].sort((a, b) => a.title.localeCompare(b.title, undefined,{ numeric: true })));
+                        }}/>
+                        <Divider/>
+                      </Card>
+                    )
+                  })}
+                </Stack>
+              </Stack>
+            </Card>
+          )
+        })}
       </Stack>
     </Card>
   )

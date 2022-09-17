@@ -3,6 +3,12 @@ use crate::configuration::Configuration;
 use std::{convert::Infallible, sync::Arc};
 use tokio::sync::mpsc::Sender;
 use warp::http::StatusCode;
+use serde::Deserialize;
+
+#[derive(Debug, Deserialize)]
+pub struct CustomFilterRequest {
+    filter: String,
+}
 
 pub async fn get_custom_filters(
     http_client: reqwest::Client,
@@ -20,7 +26,7 @@ pub async fn get_custom_filters(
 }
 
 pub async fn put_custom_filters(
-    custom_filters: String,
+    custom_filters: CustomFilterRequest,
     http_client: reqwest::Client,
     configuration_updater_sender: Sender<Configuration>,
     configuration_save_lock: Arc<tokio::sync::Mutex<()>>,
@@ -34,7 +40,7 @@ pub async fn put_custom_filters(
         }
     };
 
-    if let Err(err) = configuration.set_custom_filters(&custom_filters).await {
+    if let Err(err) = configuration.set_custom_filters(&custom_filters.filter).await {
         return Ok(Box::new(get_error_response(err)));
     }
 

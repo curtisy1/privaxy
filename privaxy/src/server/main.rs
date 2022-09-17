@@ -22,6 +22,7 @@ mod proxy;
 mod statistics;
 mod web_gui;
 
+#[cfg(not(debug_assertions))]
 pub static WEBAPP_FRONTEND_DIR: Dir<'_> = include_dir!("web_frontend/dist");
 
 #[cfg(not(target_env = "msvc"))]
@@ -193,6 +194,7 @@ async fn main() {
 
     let web_gui_static_files_server_addr = SocketAddr::from((ip, 8000));
 
+    #[cfg(not(debug_assertions))]
     web_gui::start_web_gui_static_files_server(
         web_gui_static_files_server_addr,
         web_gui_server_addr,
